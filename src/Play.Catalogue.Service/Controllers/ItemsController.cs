@@ -4,6 +4,7 @@ using Play.Catalogue.Service.Dtos;
 namespace Play.Catalogue.Service.Controllers
 {
     [ApiController]
+    [Route("[controller]")]
     public class ItemsController:ControllerBase
     {
         private static readonly List<GetItemDto> Items = new List<GetItemDto>
@@ -21,15 +22,23 @@ namespace Play.Catalogue.Service.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<GetItemDto> GetById(Guid id)
+        public async Task<ActionResult<GetItemDto>> GetById(Guid id)
         {
             var item = Items.Where(item => item.Id == id).FirstOrDefault();
-            return item;
+            if(item is null)
+            {
+                return NotFound();
+            }
+            return Ok(item);
         }
 
         [HttpPost]
         public async Task<ActionResult<GetItemDto>> Create(CreateItemDto item)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var itemCreated = new GetItemDto(Guid.NewGuid(), item.Name, item.Description, item.price, DateTimeOffset.UtcNow);
             Items.Add(itemCreated);
             //the item has been created and you can find it at the following route
@@ -39,7 +48,11 @@ namespace Play.Catalogue.Service.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, UpdateItemDto item)
         {
-            var existingItem = await GetById(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var existingItem = Items.Where(item => item.Id == id).FirstOrDefault();
             if(existingItem is null)
             {
                 return NotFound();
@@ -63,8 +76,8 @@ namespace Play.Catalogue.Service.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var existingItem = await GetById(id);
-            if(existingItem is null)
+            var existingItem = Items.Where(item => item.Id == id).FirstOrDefault();
+            if (existingItem is null)
             {
                 return NotFound();
             }
