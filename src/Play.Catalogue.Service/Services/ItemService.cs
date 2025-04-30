@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Play.Catalogue.Service.Services
 {
-    public class ItemService
+    public class ItemService:IItemService
     {
         private readonly IItemRepository _itemRepository;
 
@@ -34,7 +34,7 @@ namespace Play.Catalogue.Service.Services
             catch(Exception ex)
             {
                 response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.ExpectationFailed;
+                response.StatusCode = HttpStatusCode.InternalServerError;
             }
 
             return response;
@@ -61,7 +61,7 @@ namespace Play.Catalogue.Service.Services
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.ExpectationFailed;
+                response.StatusCode = HttpStatusCode.InternalServerError;
             }
 
             return response;
@@ -101,7 +101,7 @@ namespace Play.Catalogue.Service.Services
             catch(Exception ex)
             {
                 response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.ExpectationFailed;
+                response.StatusCode = HttpStatusCode.InternalServerError;
             }
             return response;
 
@@ -116,7 +116,7 @@ namespace Play.Catalogue.Service.Services
                 if (!checkItemExist.IsSuccess)
                 {
                     response.IsSuccess = false;
-                    response.StatusCode = HttpStatusCode.ExpectationFailed;
+                    response.StatusCode = HttpStatusCode.InternalServerError;
                     return response;
                 }
                 if (checkItemExist.RecordId is null)
@@ -147,7 +147,7 @@ namespace Play.Catalogue.Service.Services
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.ExpectationFailed;
+                response.StatusCode = HttpStatusCode.InternalServerError;
             }
             return response;
 
@@ -162,7 +162,7 @@ namespace Play.Catalogue.Service.Services
                 if (!checkItemExist.IsSuccess)
                 {
                     response.IsSuccess = false;
-                    response.StatusCode = HttpStatusCode.ExpectationFailed;
+                    response.StatusCode = HttpStatusCode.InternalServerError;
                     return response;
                 }
                 if (checkItemExist.RecordId is null)
@@ -179,7 +179,7 @@ namespace Play.Catalogue.Service.Services
             catch(Exception ex)
             {
                 response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.ExpectationFailed;
+                response.StatusCode = HttpStatusCode.InternalServerError;
             }
             return response;
         }
