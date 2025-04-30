@@ -4,7 +4,7 @@ using Play.Catalogue.Service.Entities;
 
 namespace Play.Catalogue.Service.Repositories
 {
-    public class ItemRepositoryMongoDB : GenericRepositoryMongoDB<Item>
+    public class ItemRepositoryMongoDB : GenericRepositoryMongoDB<Item>, IItemRepository
     {
 
         private const string CollectionName = "items";
