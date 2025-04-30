@@ -1,7 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
 //necessary for the swagger to display the operations/api
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    //runtime will not remove any async from the formatters
+    options.SuppressAsyncSuffixInActionNames = true;
+});
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
