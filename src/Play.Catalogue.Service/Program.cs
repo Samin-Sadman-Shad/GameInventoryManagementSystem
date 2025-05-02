@@ -1,4 +1,13 @@
+using Play.Catalogue.Service.Contracts;
+using Play.Catalogue.Service.Repositories;
+using Play.Catalogue.Service.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryMongoDB<>));
+builder.Services.AddScoped<IItemRepository, ItemRepositoryMongoDB>();
 
 //necessary for the swagger to display the operations/api
 builder.Services.AddControllers(options =>
@@ -10,6 +19,8 @@ builder.Services.AddControllers(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
 
 var app = builder.Build();
 

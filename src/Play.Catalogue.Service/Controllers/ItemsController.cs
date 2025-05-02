@@ -11,7 +11,7 @@ namespace Play.Catalogue.Service.Controllers
     {
         private static readonly List<GetItemDto> Items = new List<GetItemDto>
         {
-            new GetItemDto ( Guid.NewGuid(), "Brone Sword", "Bronze Sword", 5, DateTimeOffset.UtcNow),
+            new GetItemDto ( Guid.NewGuid(), "Bronze Sword", "Bronze Sword", 5, DateTimeOffset.UtcNow),
             new GetItemDto ( Guid.NewGuid(), "Gold Coin", "Gold Coin", 4, DateTimeOffset.UtcNow),
             new GetItemDto ( Guid.NewGuid(), "Armour", "Armour", 7, DateTimeOffset.UtcNow),
             new GetItemDto ( Guid.NewGuid(), "Sheild", "Sheild", 9, DateTimeOffset.UtcNow),

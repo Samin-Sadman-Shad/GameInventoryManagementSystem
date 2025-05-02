@@ -15,8 +15,8 @@ namespace Play.Catalogue.Service.Repositories
         public GenericRepositoryMongoDB(string collectionName)
         {
             _collectionName = collectionName;
-            var mongoClient = new MongoClient("connection_string");
-            _database = mongoClient.GetDatabase("database");
+            var mongoClient = new MongoClient("mongodb://localhost:27017");
+            _database = mongoClient.GetDatabase("Catalog");
             _dbCollection = _database.GetCollection<T>(_collectionName);
             filterBuilder = Builders<T>.Filter;
 
