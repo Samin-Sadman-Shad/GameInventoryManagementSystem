@@ -71,9 +71,9 @@ namespace Play.Catalogue.Service.Repositories
 
         protected async Task<T> GetSingleEntityById(Guid id)
         {
-            var filter = filterBuilder.Eq(t => t.Id, id);
+            FilterDefinition<T> filter = filterBuilder.Eq(t => t.Id, id);
             var cursor = await _dbCollection.FindAsync(filter);
-            var entity = await cursor.SingleOrDefaultAsync();
+            var entity = await cursor.FirstOrDefaultAsync();
             if (entity is null)
             {
                 throw new ArgumentException("Item not found with this id", nameof(entity.Id));

@@ -1,9 +1,15 @@
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Serializers;
 using Play.Catalogue.Service.Contracts;
 using Play.Catalogue.Service.Repositories;
 using Play.Catalogue.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//tell the serializer to display the corresponding fields as following Bson Type
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryMongoDB<>));
