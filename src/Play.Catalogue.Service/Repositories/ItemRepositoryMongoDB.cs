@@ -9,7 +9,7 @@ namespace Play.Catalogue.Service.Repositories
 
         private const string CollectionName = "items";
 
-        public ItemRepositoryMongoDB() : base(CollectionName)
+        public ItemRepositoryMongoDB(IMongoDatabase database) : base(CollectionName, database)
         {
 
         }

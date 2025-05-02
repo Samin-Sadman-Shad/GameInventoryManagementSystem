@@ -12,11 +12,12 @@ namespace Play.Catalogue.Service.Repositories
         protected readonly FilterDefinitionBuilder<T> filterBuilder;
         protected readonly ILogger _logger;
 
-        public GenericRepositoryMongoDB(string collectionName)
+        public GenericRepositoryMongoDB(string collectionName, IMongoDatabase database)
         {
             _collectionName = collectionName;
-            var mongoClient = new MongoClient("mongodb://localhost:27017");
-            _database = mongoClient.GetDatabase("Catalog");
+            //var mongoClient = new MongoClient("mongodb://localhost:27017");
+            //_database = mongoClient.GetDatabase("Catalog");
+            _database = database;
             _dbCollection = _database.GetCollection<T>(_collectionName);
             filterBuilder = Builders<T>.Filter;
 
