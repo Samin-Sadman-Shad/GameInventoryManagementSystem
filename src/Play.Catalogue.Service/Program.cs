@@ -10,20 +10,22 @@ using MongoDB.Driver;
 var builder = WebApplication.CreateBuilder(args);
 
 //tell the serializer to display the corresponding fields as following Bson Type
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
-BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+//BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+//BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
-builder.Services.AddSingleton(serviceProvider =>
-{
-    var mongodbSettings = builder.Configuration.GetSection(MongoDbOptions.MongoDbSettings).Get<MongoDbOptions>();
-    var mongoClient = new MongoClient(mongodbSettings?.ConnectionString);
-    var database = mongoClient.GetDatabase(serviceSettings?.ServiceName);
-    return database;
-});
+//var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+//builder.Services.AddSingleton(serviceProvider =>
+//{
+//    var mongodbSettings = builder.Configuration.GetSection(MongoDbOptions.MongoDbSettings).Get<MongoDbOptions>();
+//    var mongoClient = new MongoClient(mongodbSettings?.ConnectionString);
+//    var database = mongoClient.GetDatabase(serviceSettings?.ServiceName);
+//    return database;
+//});
+
+builder.Services.AddMongoServices();
 
 builder.Services.AddScoped<IItemService, ItemService>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryMongoDB<>));
+//builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryMongoDB<>));
 builder.Services.AddScoped<IItemRepository, ItemRepositoryMongoDB>();
 
 //necessary for the swagger to display the operations/api
