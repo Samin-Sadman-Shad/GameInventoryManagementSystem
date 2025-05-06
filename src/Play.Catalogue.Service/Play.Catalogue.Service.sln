@@ -5,7 +5,12 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Catalogue.Service", "Play.Catalogue.Service.csproj", "{C328AB99-3D7C-49F5-88BC-9D5BCD25608A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Play.Common", "..\Play.Common\Play.Common.csproj", "{C8A896C0-5DBA-4882-9EDE-448D2B5C11D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Common", "..\Play.Common\Play.Common.csproj", "{C8A896C0-5DBA-4882-9EDE-448D2B5C11D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Infra", "Play.Infra", "{8B2B3A37-FBA6-40EE-A804-FA6665C022AD}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
