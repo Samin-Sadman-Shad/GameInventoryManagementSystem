@@ -11,5 +11,7 @@ namespace Play.Inventory.Service.Contracts
             Guid CatalogItemId, 
             int Quantity, 
             DateTimeOffset AcquiredDate);
+
+        public Task<InventoryItemServiceResponse<InventoryItemDto>> GetAllInventoryItems(Guid userId);
     }
 }
