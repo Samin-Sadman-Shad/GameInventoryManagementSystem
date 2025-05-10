@@ -57,7 +57,7 @@ namespace Play.Inventory.Service.Services
                 }
 
                 response.StatusCode = HttpStatusCode.Created;
-                response.RecordId = inventoryItem.Id;
+                response.RecordId = entityResponse.Entity!.Id;
                 response.Record = inventoryItem.AsInventoryItemDto();
 
                 return response;
