@@ -1,5 +1,7 @@
 ﻿using Play.Common.Abstraction;
 using Play.Inventory.Service.Entities;
+using Play.Inventory.Service.Models;
+using static Play.Inventory.Service.DTOs.Dtos;
 
 namespace Play.Inventory.Service.Contracts
 {
@@ -10,5 +12,9 @@ namespace Play.Inventory.Service.Contracts
             Guid CatalogItemId,
             int Quantity,
             DateTimeOffset AcquiredDate);
+
+        public Task<List<InventoryItem>> GetAllInventoryItemAsync(Guid userId);
+
+        //public Task<InventoryItem> CreateInventoryItemAsync(InventoryItem item);
     }
 }
