@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using Play.Inventory.Service.Contracts;
+using System.Net.Http.Json;
 using static Play.Inventory.Service.DTOs.Dtos;
 
 namespace Play.Inventory.Service.Clients
@@ -6,7 +7,7 @@ namespace Play.Inventory.Service.Clients
     /// <summary>
     /// Comminicate with external http endpoint of Catalog service
     /// </summary>
-    public class CatalogClient
+    public class CatalogClient:ICatalogClient
     {
         //need to communicate with external endpoint
         private readonly HttpClient _httpClient;

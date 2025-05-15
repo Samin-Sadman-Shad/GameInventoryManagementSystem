@@ -11,17 +11,44 @@ namespace Play.Inventory.Service.Controllers
     [ApiController]
     public class InventoryController : ControllerBase
     {
-        IInventoryItemService _inventoryItemService;
-        public InventoryController(IInventoryItemService service)
+        private readonly IInventoryItemService _inventoryItemService;
+        private readonly ICatalogClient _catalogClient;
+        public InventoryController(IInventoryItemService service, ICatalogClient catalogClient)
         {
             _inventoryItemService = service;
+            _catalogClient = catalogClient;
         }
 
         [HttpGet]
         public async Task<ActionResult<InventoryItemDto>> GetItemByUserId([FromQuery]Guid userId)
         {
-            var inventoryItem = await _inventoryItemService.GetAllInventoryItems(userId);
-            return Ok(inventoryItem);
+            try
+            {
+                var catalogItems = await _catalogClient.GetCatalogItemAsync();
+                var inventoryItems = await _inventoryItemService.GetAllInventoryItems(userId);
+
+                if(inventoryItems != null && inventoryItems.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return BadRequest();
+                }
+
+                //first look into the collection of catalog items
+                //find the catalog item that corresponds to the current inventory item
+                var inventoryItemDtos = inventoryItems!.Records!.Select<InventoryItemDto, InventoryItemDtoExternal>(inventoryDto =>
+                {
+                    var catalogItem = catalogItems.Single(getCatalogDto => getCatalogDto.Id == inventoryDto.CatalogItemId);
+                    return new InventoryItemDtoExternal(userId,
+                        catalogItem.Name, catalogItem.Description, catalogItem.Id,
+                        inventoryDto.Quantity, inventoryDto.AcquiredDate);
+                });
+
+                return Ok(inventoryItems.Records);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, "Exception is thrown while fetching the catalog Items and Inventory Items");
+            }
+
         }
 
         [HttpPost]

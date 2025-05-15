@@ -75,6 +75,12 @@ namespace Play.Inventory.Service.Services
         {
             var response = new InventoryItemServiceResponse<InventoryItemDto>();
 
+            if(userId == Guid.Empty)
+            {
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+
             var itemEntities = await _inventoryItemRepository.GetAllInventoryItemAsync(userId);
             var itemDtos = itemEntities.Select(entity => entity.AsInventoryItemDto()).ToList();
             response.StatusCode = HttpStatusCode.OK;
