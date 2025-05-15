@@ -48,5 +48,17 @@ namespace Play.Inventory.Service.Mapper
                 AcquiredDate: entity.DateAcquired);
             return dto;
         }
+
+        public static InventoryItemDtoExternal AsExternalDto(this InventoryItem entity, string catalogName, string catalogDescription)
+        {
+            var dto = new InventoryItemDtoExternal(
+                UserId: entity.UserId,
+                CatalogId: entity.CatalogId,
+                CatalogName: catalogName,
+                CatalogDescription: catalogDescription,
+                Quantity: entity.Quantity,
+                AcquiredDate: entity.DateAcquired);
+            return dto;
+        }
     }
 }
