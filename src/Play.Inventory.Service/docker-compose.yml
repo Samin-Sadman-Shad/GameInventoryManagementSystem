@@ -6,9 +6,9 @@ services:
     image: mongo
     container_name: mongo3
     ports:
-       - 27018:27017
+       - 27019:27017
     volumes:
-        - mongodbdata:/data/db
+        - mongodbdata3:/data/db
 
 volumes:
-    mongodbdata:
+    mongodbdata3:

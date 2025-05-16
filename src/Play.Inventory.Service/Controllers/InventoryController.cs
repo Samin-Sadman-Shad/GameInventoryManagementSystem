@@ -42,7 +42,7 @@ namespace Play.Inventory.Service.Controllers
                         inventoryDto.Quantity, inventoryDto.AcquiredDate);
                 });
 
-                return Ok(inventoryItems.Records);
+                return Ok(inventoryItemDtos);
             }
             catch(Exception ex)
             {

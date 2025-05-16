@@ -4,11 +4,11 @@ version: "3.8"
 services:
   mongo:
     image: mongo
-    container_name: mongo
+    container_name: mongo2
     ports:
        - 27018:27017
     volumes:
-        - mongodbdata:/data/db
+        - mongodbdata2:/data/db
 
 volumes:
-    mongodbdata:
+    mongodbdata2:
