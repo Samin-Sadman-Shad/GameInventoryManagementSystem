@@ -3,18 +3,37 @@ using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Contracts;
 using Play.Inventory.Service.Repositories;
 using Play.Inventory.Service.Services;
+using Polly;
+using Polly.Timeout;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddMongoServices();
+
+Random jitterer = new Random();
+
 //specify base address of the other microservcie
 //when catalog client is instantiated, it will automatically receive an instance of a http client
 builder.Services.AddHttpClient<ICatalogClient, CatalogClient>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7163");
-});
+})
+.AddTransientHttpErrorPolicy(builder => 
+        builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
+            retryCount: 5,
+
+            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+            + TimeSpan.FromMilliseconds(jitterer.Next(0, 1000)),
+
+            onRetry: (outcome, timespan, retryAttempt) =>
+            {
+                Console.WriteLine($"Delaying for {timespan.TotalSeconds} then making retry {retryAttempt} times");
+            }
+))
+.AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(2));
 builder.Services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
 builder.Services.AddScoped<IInventoryItemService, InventoryItemService>();
 builder.Services.AddControllers();
