@@ -21,7 +21,7 @@ builder.Services.AddHttpClient<ICatalogClient, CatalogClient>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7163");
 })
-.AddTransientHttpErrorPolicy(builder => 
+.AddTransientHttpErrorPolicy(builder =>
         builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
             retryCount: 5,
 
@@ -33,6 +33,17 @@ builder.Services.AddHttpClient<ICatalogClient, CatalogClient>(client =>
                 Console.WriteLine($"Delaying for {timespan.TotalSeconds} then making retry {retryAttempt} times");
             }
 ))
+.AddTransientHttpErrorPolicy(builder => 
+    builder.Or<TimeoutRejectedException>().CircuitBreakerAsync(
+        handledEventsAllowedBeforeBreaking: 5,
+        durationOfBreak: TimeSpan.FromSeconds(30),
+        onBreak: (outcome, timespan) =>
+        {
+
+        },
+        onReset: () => { }
+    )
+)
 .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(2));
 builder.Services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
 builder.Services.AddScoped<IInventoryItemService, InventoryItemService>();
