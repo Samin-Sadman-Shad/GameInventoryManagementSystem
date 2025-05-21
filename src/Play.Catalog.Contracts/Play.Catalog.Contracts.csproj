@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Play.Catalogue.Service\Play.Catalogue.Service.csproj" />
-  </ItemGroup>
-
 </Project>

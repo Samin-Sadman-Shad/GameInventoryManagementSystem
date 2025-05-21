@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MassTransit;
+using MassTransit.Testing;
+using Microsoft.AspNetCore.Mvc;
+using Play.Catalog.Contracts.Contracts;
 using Play.Catalogue.Service.Contracts;
 using Play.Catalogue.Service.Dtos;
 using Play.Catalogue.Service.Entities;
@@ -18,10 +21,13 @@ namespace Play.Catalogue.Service.Controllers
         };
 
         private readonly IItemService _itemService;
-
-        public ItemsController(IItemService itemService)
+        //Allow to communicate that we want to send message to some location
+        //publish a message and send that message
+        private readonly IPublishEndpoint _publishEndpoint;
+        public ItemsController(IItemService itemService, IPublishEndpoint publishEndpoint)
         {
             _itemService = itemService;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet]
@@ -73,6 +79,10 @@ namespace Play.Catalogue.Service.Controllers
             ////the item has been created and you can find it at the following route
             //return CreatedAtAction(nameof(GetById), new { Id = itemCreated.Id }, itemCreated);
             var response = await _itemService.CreateItemAsync(item);
+            //just after creating the item in our database,
+            //publish a message announcing that item has been created
+            await _publishEndpoint.Publish(
+                new CatalogItemCreated(response.Record.Id, response.Record.Name, response.Record.Description));
             if (!response.IsSuccess)
             {
                 if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -114,6 +124,8 @@ namespace Play.Catalogue.Service.Controllers
             //return NoContent();
 
             var response = await _itemService.UpdateItemAsync(id, item);
+
+            await _publishEndpoint.Publish( new CatalogItemUpdated(id, item.Name, item.Description));
             if (!response.IsSuccess)
             {
                 if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -145,6 +157,8 @@ namespace Play.Catalogue.Service.Controllers
 
             //return NoContent();
             var response = await _itemService.DeleteItemAsync(id);
+
+            await _publishEndpoint.Publish(new CatalogItemDeleted(id));
             if (!response.IsSuccess)
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
