@@ -6,6 +6,7 @@ using Play.Catalogue.Service.Repositories;
 using Play.Catalogue.Service.Services;
 using Play.Catalogue.Service.Settings;
 using MongoDB.Driver;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,28 @@ builder.Services.AddMongoServices();
 builder.Services.AddScoped<IItemService, ItemService>();
 //builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryMongoDB<>));
 builder.Services.AddScoped<IItemRepository, ItemRepositoryMongoDB>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, configurator) =>
+    {
+        var rabbitMqSettings = builder.Configuration.GetSection(RabbitMQSettingsOption.RabbitMQSettings)
+                                .Get<RabbitMQSettingsOption>();
+        configurator.Host(rabbitMqSettings!.Host);
+
+        //define or modify how queues are created in rabbitMq
+        configurator.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(new ServiceSettings().ServiceName, false));
+    });
+});
+
+//start mass transit hosted service
+//this is the service that actually startes the Rabbit MQ bus
+//so that messages can be published to different queuses and exchanges in rabbit mq
+// builder.Services.AddMassTransitHostedService();
+builder.Services.Configure<MassTransitHostOptions>(option =>
+{
+
+});
 
 //necessary for the swagger to display the operations/api
 builder.Services.AddControllers(options =>
