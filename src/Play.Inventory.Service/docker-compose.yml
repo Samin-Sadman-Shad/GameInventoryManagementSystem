@@ -1,14 +1,15 @@
 #docker run -d --rm -name mango -p 27018:27917 -v mongodbdata:/db/data mong
+#not needed, a single mongodb server instance listening on a single port is enough to run two database
 
-version: "3.8"
-services:
-  mongo:
-    image: mongo
-    container_name: mongo3
-    ports:
-       - 27019:27017
-    volumes:
-        - mongodbdata3:/data/db
+# version: "3.8"
+# services:
+#   mongo:
+#     image: mongo
+#     container_name: mongo3
+#     ports:
+#        - 27019:27017
+#     volumes:
+#         - mongodbdata3:/data/db
 
-volumes:
-    mongodbdata3:
+# volumes:
+#     mongodbdata3:

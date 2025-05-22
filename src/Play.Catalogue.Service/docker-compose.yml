@@ -9,6 +9,18 @@ services:
        - 27018:27017
     volumes:
         - mongodbdata2:/data/db
+  
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+        - 5672:5672   #used by the services to consume or publish messages to rabbitmq
+        - 15672:15672   #use to go to the portal
+    volumes:
+        - rabbitmqdata:var/lib/rabbitmq   #map the volumne into some location inside rabbitmq container
+    hostname: rabbitmq  #associated to how rabbit mq stores data internally, 
+                        #without specifying it, container gets a random value, each time restart container, it will store data in different place
 
 volumes:
-    mongodbdata2:
+    mongodbdata2: #if the container is removed, data will be saved in a persistent volume
+    rabbitmqdata: #don't want to miss or loss those messages if rabbitmq container goes down
