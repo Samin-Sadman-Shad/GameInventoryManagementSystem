@@ -59,11 +59,15 @@ namespace Play.Inventory.Service.Controllers
             {
                 return BadRequest(response.Message);
             }
-            if(response.StatusCode == HttpStatusCode.Created)
+            else if(response.StatusCode == HttpStatusCode.Created)
             {
                 return CreatedAtAction(nameof(GetItemByUserId), new {Id = response.RecordId}, response.Record);
             }
-            return StatusCode(500);
+            else
+            {
+                return StatusCode(500, response.StatusCode);
+            }
+
         }
     }
 }

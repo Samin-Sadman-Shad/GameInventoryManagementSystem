@@ -49,16 +49,18 @@ namespace Play.Inventory.Service.Services
                 if(inventoryItem is null)
                 {
                     await _inventoryItemRepository.AddAsync(entityResponse.Entity!);
+                    response.Record = entityResponse.Entity!.AsInventoryItemDto();
                 }
                 else
                 {
                     inventoryItem.Quantity += dto.Quantity;
                     await _inventoryItemRepository.UpdateAsync(inventoryItem);
+                    response.Record = inventoryItem!.AsInventoryItemDto();
                 }
 
                 response.StatusCode = HttpStatusCode.Created;
                 response.RecordId = entityResponse.Entity!.Id;
-                response.Record = inventoryItem!.AsInventoryItemDto();
+                
 
                 return response;
             }
