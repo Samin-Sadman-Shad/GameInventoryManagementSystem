@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using Play.Common.Abstraction;
 
 namespace Play.Catalogue.Service.Entities
 {

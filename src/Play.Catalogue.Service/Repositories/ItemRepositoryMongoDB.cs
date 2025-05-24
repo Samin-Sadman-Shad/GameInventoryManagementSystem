@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using Play.Catalogue.Service.Contracts;
 using Play.Catalogue.Service.Entities;
+using Play.Common.MongoDb;
 
 namespace Play.Catalogue.Service.Repositories
 {

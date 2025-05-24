@@ -7,6 +7,8 @@ using Play.Catalogue.Service.Services;
 using Play.Catalogue.Service.Settings;
 using MongoDB.Driver;
 using MassTransit;
+using Play.Common.MongoDb;
+using Play.Common.MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,24 +25,25 @@ var builder = WebApplication.CreateBuilder(args);
 //    return database;
 //});
 
-builder.Services.AddMongoServices();
+builder.Services.AddMongoServices()
+    .AddMassTransitWithRabbitMq();
 
 builder.Services.AddScoped<IItemService, ItemService>();
 //builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryMongoDB<>));
 builder.Services.AddScoped<IItemRepository, ItemRepositoryMongoDB>();
 
-builder.Services.AddMassTransit(x =>
-{
-    x.UsingRabbitMq((context, configurator) =>
-    {
-        var rabbitMqSettings = builder.Configuration.GetSection(RabbitMQSettingsOption.RabbitMQSettings)
-                                .Get<RabbitMQSettingsOption>();
-        configurator.Host(rabbitMqSettings!.Host);
+//builder.Services.AddMassTransit(x =>
+//{
+//    x.UsingRabbitMq((context, configurator) =>
+//    {
+//        var rabbitMqSettings = builder.Configuration.GetSection(RabbitMQSettingsOption.RabbitMQSettings)
+//                                .Get<RabbitMQSettingsOption>();
+//        configurator.Host(rabbitMqSettings!.Host);
 
-        //define or modify how queues are created in rabbitMq
-        configurator.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(new ServiceSettings().ServiceName, false));
-    });
-});
+//        //define or modify how queues are created in rabbitMq
+//        configurator.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(new ServiceSettings().ServiceName, false));
+//    });
+//});
 
 //start mass transit hosted service
 //this is the service that actually startes the Rabbit MQ bus

@@ -1,4 +1,5 @@
 ﻿using Play.Catalogue.Service.Entities;
+using Play.Common.Abstraction;
 
 namespace Play.Catalogue.Service.Contracts
 {
