@@ -21,9 +21,10 @@ namespace Play.Common.MongoDb
             {
                 //request a registered service from service provider
                 var configuration = serviceProvider.GetService<IConfiguration>();
-                var serviceSettings = configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+                var serviceSettings = configuration!.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
                 var mongodbSettings = configuration.GetSection(MongoDbOptions.MongoDbSettings).Get<MongoDbOptions>();
                 var mongoClient = new MongoClient(mongodbSettings?.ConnectionString);
+                //use the serviceName as the name of the database in mongodb
                 var database = mongoClient.GetDatabase(serviceSettings?.ServiceName);
                 return database;
             });
