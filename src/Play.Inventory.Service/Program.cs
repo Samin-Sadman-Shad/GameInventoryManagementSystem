@@ -1,3 +1,4 @@
+using Play.Common.MassTransit;
 using Play.Common.MongoDb;
 using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Contracts;
@@ -11,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddMongoServices();
+builder.Services.AddMongoServices().AddMassTransitWithRabbitMq();
+builder.Services.AddScoped<ICatalogItemRepository, CatalogItemRepository>();
 
 Random jitterer = new Random();
 

@@ -17,20 +17,35 @@ namespace Play.Inventory.Service.Consumers
         {
             var message = context.Message;
 
-            var catalogItemExisting = await _catalogItemRepository.GetAsync(message.Id);
-            if(catalogItemExisting is not null)
+            try
             {
-                return;
+                var catalogItemExisting = await _catalogItemRepository.GetAsync(message.Id);
+                if (catalogItemExisting is not null)
+                {
+                    return;
+                }
+
+                var catalogItem = new CatalogItem
+                {
+                    Id = message.Id,
+                    Name = message.Name,
+                    Description = message.Description,
+                };
+
+                await _catalogItemRepository.AddAsync(catalogItem);
+            }
+            catch(ArgumentException ex)
+            {
+                var catalogItem = new CatalogItem
+                {
+                    Id = message.Id,
+                    Name = message.Name,
+                    Description = message.Description,
+                };
+
+                await _catalogItemRepository.AddAsync(catalogItem);
             }
 
-            var catalogItem = new CatalogItem
-            {
-                Id = message.Id,
-                Name = message.Name,
-                Description = message.Description,
-            };
-
-            await _catalogItemRepository.AddAsync(catalogItem);
 
         }
     }

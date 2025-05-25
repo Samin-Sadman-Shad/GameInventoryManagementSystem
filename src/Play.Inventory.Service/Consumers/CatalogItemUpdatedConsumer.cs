@@ -17,9 +17,28 @@ namespace Play.Inventory.Service.Consumers
         public async Task Consume(ConsumeContext<CatalogItemUpdated> context)
         {
             var message = context.Message;
+            try
+            {
+                var catalogItemExisting = await _catalogItemRepository.GetAsync(message.Id);
+                if (catalogItemExisting is null)
+                {
+                    var catalogItem = new CatalogItem
+                    {
+                        Id = message.Id,
+                        Name = message.Name,
+                        Description = message.Description,
+                    };
 
-            var catalogItemExisting = await _catalogItemRepository.GetAsync(message.Id);
-            if (catalogItemExisting is null)
+                    await _catalogItemRepository.AddAsync(catalogItem);
+                }
+                else
+                {
+                    catalogItemExisting.Name = message.Name;
+                    catalogItemExisting.Description = message.Description;
+                    await _catalogItemRepository.UpdateAsync(catalogItemExisting);
+                }
+            }
+            catch(ArgumentException ex)
             {
                 var catalogItem = new CatalogItem
                 {
@@ -30,12 +49,7 @@ namespace Play.Inventory.Service.Consumers
 
                 await _catalogItemRepository.AddAsync(catalogItem);
             }
-            else
-            {
-                catalogItemExisting.Name = message.Name;
-                catalogItemExisting.Description = message.Description;
-                await _catalogItemRepository.UpdateAsync(catalogItemExisting);
-            }
+
 
 
         }

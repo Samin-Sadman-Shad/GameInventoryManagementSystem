@@ -25,6 +25,8 @@ namespace Play.Common.MongoDb
                 var mongodbSettings = configuration.GetSection(MongoDbOptions.MongoDbSettings).Get<MongoDbOptions>();
                 var mongoClient = new MongoClient(mongodbSettings?.ConnectionString);
                 //use the serviceName as the name of the database in mongodb
+                //there will be separate database for each service, each can contain multiple collection
+                //all of the databases can be on the same server(single port), or in multiple server(different host port)
                 var database = mongoClient.GetDatabase(serviceSettings?.ServiceName);
                 return database;
             });
