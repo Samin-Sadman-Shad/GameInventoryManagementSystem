@@ -6,6 +6,8 @@ using Play.Inventory.Service.Mapper;
 using Play.Inventory.Service.Entities;
 using static Play.Inventory.Service.DTOs.Dtos;
 using System.Net;
+using System.Collections.Immutable;
+using MassTransit;
 
 namespace Play.Inventory.Service.Services
 {
@@ -80,27 +82,61 @@ namespace Play.Inventory.Service.Services
         {
             //var response = new InventoryItemServiceResponse<InventoryItemDto>();
             var response = new InventoryItemServiceResponse<InventoryItemDtoExternal>();
-
-            if (userId == Guid.Empty)
+            try
             {
-                response.StatusCode = HttpStatusCode.BadRequest;
+                if (userId == Guid.Empty)
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+
+                var itemEntities = await _inventoryItemRepository.GetAllInventoryItemAsync(userId);
+
+                var catalogItemIds = itemEntities.Select(x => x.CatalogId);
+                var catalogItemEntities = await _catalogItemRepository.GetAllAsync(catalogItem => catalogItemIds.Contains(catalogItem.Id));
+
+                //var itemDtos = itemEntities.Select(entity => entity.AsInventoryItemDto()).ToList();
+                var itemDtos = itemEntities.Select(inventoryItem =>
+                {
+                    var catalogItem = catalogItemEntities.Single(item => item.Id == inventoryItem.CatalogId);
+                    return inventoryItem.AsExternalDto(catalogItem.Name, catalogItem.Description);
+                });
+                response.StatusCode = HttpStatusCode.OK;
+                response.Records = itemDtos.ToList();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
                 return response;
             }
 
-            var itemEntities = await _inventoryItemRepository.GetAllInventoryItemAsync(userId);
+        }
 
-            var catalogItemIds = itemEntities.Select(x => x.CatalogId);
-            var catalogItemEntities = await _catalogItemRepository.GetAllAsync(catalogItem => catalogItemIds.Contains(catalogItem.Id));
-
-            //var itemDtos = itemEntities.Select(entity => entity.AsInventoryItemDto()).ToList();
-            var itemDtos = itemEntities.Select(inventoryItem =>
+        public async Task<InventoryItemServiceResponse<Guid>> GetUserIds()
+        {
+            var response = new InventoryItemServiceResponse<Guid>();
+            try
             {
-                var catalogItem = catalogItemEntities.Single(item => item.Id == inventoryItem.CatalogId);
-                return inventoryItem.AsExternalDto(catalogItem.Name, catalogItem.Description);
-            });
-            response.StatusCode = HttpStatusCode.OK;
-            response.Records = itemDtos.ToList();
-            return response;
+                var inventoryItems = await _inventoryItemRepository.GetAllAsync();
+                if (inventoryItems == null)
+                {
+                    response.Records = null;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
+                var userIds = inventoryItems!.Select(x => x.UserId).ToImmutableList();
+                response.Records = userIds;
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                return response;
+            }
+
+
         }
     }
 }

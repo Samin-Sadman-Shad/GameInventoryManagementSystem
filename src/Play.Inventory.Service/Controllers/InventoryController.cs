@@ -4,6 +4,7 @@ using Play.Inventory.Service.Contracts;
 using Play.Inventory.Service.Models;
 using static Play.Inventory.Service.DTOs.Dtos;
 using System.Net;
+using System.Collections.Immutable;
 
 namespace Play.Inventory.Service.Controllers
 {
@@ -69,6 +70,24 @@ namespace Play.Inventory.Service.Controllers
                 return StatusCode(500, response.StatusCode);
             }
 
+        }
+
+        [HttpGet("user-list")]
+        public async Task<ActionResult<IImmutableList<Guid>>> GetUserIds()
+        {
+            var response = await _inventoryItemService.GetUserIds();
+            if(response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound();
+            }
+            else if(response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(response.Records);
+            }
+            else
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

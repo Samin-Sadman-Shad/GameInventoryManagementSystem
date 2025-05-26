@@ -13,6 +13,6 @@ namespace Play.Inventory.Service.Models
     {
         public Guid RecordId { get; set; }
         public T? Record { get; set; }
-        public List<T>? Records { get; set; }
+        public IList<T>? Records { get; set; }
     }
 }
