@@ -2,6 +2,7 @@
 using Play.Inventory.Service.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 using static Play.Inventory.Service.DTOs.Dtos;
 
 namespace Play.Inventory.Service.Mapper
@@ -58,6 +59,15 @@ namespace Play.Inventory.Service.Mapper
                 CatalogDescription: catalogDescription,
                 Quantity: entity.Quantity,
                 AcquiredDate: entity.DateAcquired);
+            return dto;
+        }
+
+        public static GetCatalogItemDto AsCatalogDto(this CatalogItem catalogItem)
+        {
+            var dto = new GetCatalogItemDto(
+                                Name: catalogItem.Name,
+                                Description: catalogItem.Description);
+
             return dto;
         }
     }

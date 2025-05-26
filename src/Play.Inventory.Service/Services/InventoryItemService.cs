@@ -8,6 +8,7 @@ using static Play.Inventory.Service.DTOs.Dtos;
 using System.Net;
 using System.Collections.Immutable;
 using MassTransit;
+using MassTransit.Initializers;
 
 namespace Play.Inventory.Service.Services
 {
@@ -21,20 +22,6 @@ namespace Play.Inventory.Service.Services
             _inventoryItemRepository = inventoryItemRepository;
             _catalogItemRepository = catalogItemRepository;
         }
-
-        //public async Task<InventoryItemServiceResponse<Dtos.InventoryItemDto>> GetInventoryItem(
-        //    Guid UserId, 
-        //    Guid CatalogItemId, 
-        //    int Quantity, 
-        //    DateTimeOffset AcquiredDate)
-        //{
-        //    var response = new InventoryItemServiceResponse<Dtos.InventoryItemDto>();
-        //    var itemEntities = await _inventoryItemRepository.GetInventoryItemAsync(UserId, CatalogItemId, Quantity, AcquiredDate);
-        //    var itemDtos = itemEntities.Select<InventoryItem, InventoryItemDto>(entity => entity.AsInventoryItemDto()).ToList();
-        //    response.StatusCode = HttpStatusCode.OK;
-        //    response.Records = itemDtos;
-        //    return response;
-        //}
 
         public async Task<InventoryItemServiceResponse<InventoryItemDto>> GrantInventoryItem(Dtos.GrantInventoryItemDto dto)
         {
@@ -140,5 +127,39 @@ namespace Play.Inventory.Service.Services
 
 
         }
+
+        public async Task<InventoryItemServiceResponse<GetCatalogItemDto>> GetLocalCatalogList()
+        {
+            var response = new InventoryItemServiceResponse<GetCatalogItemDto>();
+            try
+            {
+                var catalogs = await _catalogItemRepository.GetAllAsync();
+                var catalogDtos = catalogs.Select(catalog => catalog.AsCatalogDto());
+                response.Records = catalogDtos.ToImmutableList();
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                return response;
+            }
+
+
+        }
+
+        //public async Task<InventoryItemServiceResponse<Dtos.InventoryItemDto>> GetInventoryItem(
+        //    Guid UserId, 
+        //    Guid CatalogItemId, 
+        //    int Quantity, 
+        //    DateTimeOffset AcquiredDate)
+        //{
+        //    var response = new InventoryItemServiceResponse<Dtos.InventoryItemDto>();
+        //    var itemEntities = await _inventoryItemRepository.GetInventoryItemAsync(UserId, CatalogItemId, Quantity, AcquiredDate);
+        //    var itemDtos = itemEntities.Select<InventoryItem, InventoryItemDto>(entity => entity.AsInventoryItemDto()).ToList();
+        //    response.StatusCode = HttpStatusCode.OK;
+        //    response.Records = itemDtos;
+        //    return response;
+        //}
     }
 }

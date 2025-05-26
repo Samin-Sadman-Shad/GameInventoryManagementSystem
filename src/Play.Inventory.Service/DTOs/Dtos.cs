@@ -18,7 +18,7 @@ namespace Play.Inventory.Service.DTOs
         public record InventoryItemDto(Guid UserId, Guid CatalogItemId, int Quantity, DateTimeOffset AcquiredDate);
 
         //dto for the client that will be able to query for the catalog item from the catalog service
-        public record GetCatalogItemDto(Guid Id, string Name, string Description);
+        public record GetCatalogItemDto(string Name, string Description);
 
         public record InventoryItemDtoExternal(Guid UserId, 
             string CatalogName, string CatalogDescription, Guid CatalogId, 

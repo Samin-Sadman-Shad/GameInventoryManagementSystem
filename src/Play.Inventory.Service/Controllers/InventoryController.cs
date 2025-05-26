@@ -89,5 +89,19 @@ namespace Play.Inventory.Service.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("catalog-list")]
+        public async Task<ActionResult<IImmutableList<GetCatalogItemDto>>> GetLocalCatalogList()
+        {
+            var response = await _inventoryItemService.GetLocalCatalogList();
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(response.Records);
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }

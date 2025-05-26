@@ -9,6 +9,7 @@ namespace Play.Inventory.Service.Contracts
         public Task<InventoryItemServiceResponse<InventoryItemDtoExternal>> GetAllInventoryItems(Guid userId);
 
         public Task<InventoryItemServiceResponse<Guid>> GetUserIds();
+        public Task<InventoryItemServiceResponse<GetCatalogItemDto>> GetLocalCatalogList();
 
                 //public Task<InventoryItemServiceResponse<InventoryItemDto>> GetInventoryItem(
                 //    Guid UserId, 
