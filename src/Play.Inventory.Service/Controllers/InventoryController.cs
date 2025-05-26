@@ -44,7 +44,7 @@ namespace Play.Inventory.Service.Controllers
                                 });*/
 
                 //return Ok(inventoryItemDtos);
-                return Ok(inventoryItems);
+                return Ok(inventoryItems!.Records);
             }
             catch(Exception ex)
             {

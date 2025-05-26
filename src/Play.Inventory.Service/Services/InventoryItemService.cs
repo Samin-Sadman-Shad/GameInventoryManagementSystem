@@ -125,7 +125,9 @@ namespace Play.Inventory.Service.Services
                     response.StatusCode = HttpStatusCode.NotFound;
                     return response;
                 }
-                var userIds = inventoryItems!.Select(x => x.UserId).ToImmutableList();
+                var userIds = inventoryItems!.Select(x => x.UserId)
+                                             .Distinct()
+                                             .ToImmutableList();
                 response.Records = userIds;
                 response.StatusCode = HttpStatusCode.OK;
                 return response;
