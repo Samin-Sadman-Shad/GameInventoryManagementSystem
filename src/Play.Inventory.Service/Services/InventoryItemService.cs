@@ -12,25 +12,27 @@ namespace Play.Inventory.Service.Services
     public class InventoryItemService : IInventoryItemService
     {
         private readonly IInventoryItemRepository _inventoryItemRepository;
+        private readonly ICatalogItemRepository _catalogItemRepository;
 
-        public InventoryItemService(IInventoryItemRepository inventoryItemRepository)
+        public InventoryItemService(IInventoryItemRepository inventoryItemRepository, ICatalogItemRepository catalogItemRepository)
         {
             _inventoryItemRepository = inventoryItemRepository;
+            _catalogItemRepository = catalogItemRepository;
         }
 
-        public async Task<InventoryItemServiceResponse<Dtos.InventoryItemDto>> GetInventoryItem(
-            Guid UserId, 
-            Guid CatalogItemId, 
-            int Quantity, 
-            DateTimeOffset AcquiredDate)
-        {
-            var response = new InventoryItemServiceResponse<Dtos.InventoryItemDto>();
-            var itemEntities = await _inventoryItemRepository.GetInventoryItemAsync(UserId, CatalogItemId, Quantity, AcquiredDate);
-            var itemDtos = itemEntities.Select<InventoryItem, InventoryItemDto>(entity => entity.AsInventoryItemDto()).ToList();
-            response.StatusCode = HttpStatusCode.OK;
-            response.Records = itemDtos;
-            return response;
-        }
+        //public async Task<InventoryItemServiceResponse<Dtos.InventoryItemDto>> GetInventoryItem(
+        //    Guid UserId, 
+        //    Guid CatalogItemId, 
+        //    int Quantity, 
+        //    DateTimeOffset AcquiredDate)
+        //{
+        //    var response = new InventoryItemServiceResponse<Dtos.InventoryItemDto>();
+        //    var itemEntities = await _inventoryItemRepository.GetInventoryItemAsync(UserId, CatalogItemId, Quantity, AcquiredDate);
+        //    var itemDtos = itemEntities.Select<InventoryItem, InventoryItemDto>(entity => entity.AsInventoryItemDto()).ToList();
+        //    response.StatusCode = HttpStatusCode.OK;
+        //    response.Records = itemDtos;
+        //    return response;
+        //}
 
         public async Task<InventoryItemServiceResponse<InventoryItemDto>> GrantInventoryItem(Dtos.GrantInventoryItemDto dto)
         {
@@ -46,6 +48,7 @@ namespace Play.Inventory.Service.Services
                 }
                 var inventoryItem = await _inventoryItemRepository.GetAsync(item => 
                                                                     item.UserId == dto.UserId && item.CatalogId == dto.CatalogItemId);
+
                 if(inventoryItem is null)
                 {
                     await _inventoryItemRepository.AddAsync(entityResponse.Entity!);
@@ -73,20 +76,30 @@ namespace Play.Inventory.Service.Services
             
         }
 
-        public async Task<InventoryItemServiceResponse<InventoryItemDto>> GetAllInventoryItems(Guid userId)
+        public async Task<InventoryItemServiceResponse<InventoryItemDtoExternal>> GetAllInventoryItems(Guid userId)
         {
-            var response = new InventoryItemServiceResponse<InventoryItemDto>();
+            //var response = new InventoryItemServiceResponse<InventoryItemDto>();
+            var response = new InventoryItemServiceResponse<InventoryItemDtoExternal>();
 
-            if(userId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 return response;
             }
 
             var itemEntities = await _inventoryItemRepository.GetAllInventoryItemAsync(userId);
-            var itemDtos = itemEntities.Select(entity => entity.AsInventoryItemDto()).ToList();
+
+            var catalogItemIds = itemEntities.Select(x => x.CatalogId);
+            var catalogItemEntities = await _catalogItemRepository.GetAllAsync(catalogItem => catalogItemIds.Contains(catalogItem.Id));
+
+            //var itemDtos = itemEntities.Select(entity => entity.AsInventoryItemDto()).ToList();
+            var itemDtos = itemEntities.Select(inventoryItem =>
+            {
+                var catalogItem = catalogItemEntities.Single(item => item.Id == inventoryItem.CatalogId);
+                return inventoryItem.AsExternalDto(catalogItem.Name, catalogItem.Description);
+            });
             response.StatusCode = HttpStatusCode.OK;
-            response.Records = itemDtos;
+            response.Records = itemDtos.ToList();
             return response;
         }
     }

@@ -20,7 +20,7 @@ namespace Play.Inventory.Service.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<InventoryItemDto>> GetItemByUserId([FromQuery]Guid userId)
+        public async Task<ActionResult<InventoryItemDtoExternal>> GetItemByUserId([FromQuery]Guid userId)
         {
             try
             {
@@ -34,15 +34,16 @@ namespace Play.Inventory.Service.Controllers
 
                 //first look into the collection of catalog items
                 //find the catalog item that corresponds to the current inventory item
-                var inventoryItemDtos = inventoryItems!.Records!.Select<InventoryItemDto, InventoryItemDtoExternal>(inventoryDto =>
-                {
-                    var catalogItem = catalogItems.Single(getCatalogDto => getCatalogDto.Id == inventoryDto.CatalogItemId);
-                    return new InventoryItemDtoExternal(userId,
-                        catalogItem.Name, catalogItem.Description, catalogItem.Id,
-                        inventoryDto.Quantity, inventoryDto.AcquiredDate);
-                });
+                /*                var inventoryItemDtos = inventoryItems!.Records!.Select<InventoryItemDto, InventoryItemDtoExternal>(inventoryDto =>
+                                {
+                                    var catalogItem = catalogItems.Single(getCatalogDto => getCatalogDto.Id == inventoryDto.CatalogItemId);
+                                    return new InventoryItemDtoExternal(userId,
+                                        catalogItem.Name, catalogItem.Description, catalogItem.Id,
+                                        inventoryDto.Quantity, inventoryDto.AcquiredDate);
+                                });*/
 
-                return Ok(inventoryItemDtos);
+                //return Ok(inventoryItemDtos);
+                return Ok(inventoryItems);
             }
             catch(Exception ex)
             {
