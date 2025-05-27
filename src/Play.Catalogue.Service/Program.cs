@@ -76,7 +76,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//http redirection
 app.UseHttpsRedirection();
+//static files
+//routing
+//CORS
+app.UseCors(policyBuilder =>
+{
+    policyBuilder.WithOrigins(builder.Configuration[AllowedHostSetting!])
+                 .AllowAnyHeader()
+                 .AllowAnyMethod();
+});
 
 /*var summaries = new[]
 {

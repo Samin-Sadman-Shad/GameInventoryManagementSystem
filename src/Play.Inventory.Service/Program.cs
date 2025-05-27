@@ -8,6 +8,7 @@ using Polly;
 using Polly.Timeout;
 using System;
 
+const string AllowedHostSetting = "AllowedHost";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -63,7 +64,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//http redirection
 app.UseHttpsRedirection();
+//static files
+//routing
+//CORS
+app.UseCors(policyBuilder =>
+{
+    policyBuilder.WithOrigins(builder.Configuration[AllowedHostSetting!])
+                 .AllowAnyHeader()
+                 .AllowAnyMethod();
+});
 
 app.UseAuthorization();
 
